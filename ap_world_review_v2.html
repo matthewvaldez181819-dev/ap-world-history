@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP World History — Ace Your Exam</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --card: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #f5c842;
+    --accent2: #ff6b35;
+    --text: #f0eff5;
+    --muted: #8887a0;
+    --green: #4ade80;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* GLOW BG */
+  .bg-glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(245,200,66,0.08) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .bg-glow2 {
+    position: fixed;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,107,53,0.06) 0%, transparent 70%);
+    bottom: 0; left: -100px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 80px 24px 60px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .badge {
+    display: inline-block;
+    background: rgba(245,200,66,0.12);
+    border: 1px solid rgba(245,200,66,0.3);
+    color: var(--accent);
+    padding: 6px 18px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 10vw, 96px);
+    line-height: 0.95;
+    letter-spacing: 2px;
+    margin-bottom: 24px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-size: 18px;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 40px;
+  }
+
+  .cta-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #0a0a0f;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 16px 40px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(245,200,66,0.35);
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* QUIZ SECTION */
+  .quiz-section {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+
+  .quiz-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 5vw, 42px);
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .quiz-section h2 em { color: var(--accent); font-style: italic; }
+
+  .quiz-desc {
+    text-align: center;
+    color: var(--muted);
+    margin-bottom: 40px;
+    font-size: 15px;
+  }
+
+  /* STEPS */
+  .steps {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+  }
+  .step-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+  .step-dot.active { background: var(--accent); }
+  .step-dot.done { background: var(--green); }
+
+  /* QUIZ CARD */
+  .quiz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(20px, 3vw, 26px);
+    line-height: 1.4;
+    margin-bottom: 28px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .option {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 20px;
+    cursor: pointer;
+    font-size: 15px;
+    color: var(--text);
+    text-align: left;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .option:hover {
+    border-color: var(--accent);
+    background: rgba(245,200,66,0.07);
+    transform: translateX(4px);
+  }
+  .option.selected {
+    border-color: var(--accent);
+    background: rgba(245,200,66,0.12);
+    color: var(--accent);
+  }
+  .option-letter {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: background 0.15s;
+  }
+  .option.selected .option-letter { background: var(--accent); color: #0a0a0f; }
+
+  /* TEXT INPUT */
+  .text-input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 15px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .text-input:focus { border-color: var(--accent); }
+  .text-input::placeholder { color: var(--muted); }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: all 0.15s;
+  }
+  .checkbox-item:hover { border-color: var(--accent); background: rgba(245,200,66,0.05); }
+  .checkbox-item.selected { border-color: var(--accent); background: rgba(245,200,66,0.1); }
+  .cb-box {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .checkbox-item.selected .cb-box {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0f;
+  }
+  .cb-check { display: none; font-size: 12px; font-weight: bold; }
+  .checkbox-item.selected .cb-check { display: block; }
+
+  .next-btn {
+    margin-top: 28px;
+    width: 100%;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 10px;
+    padding: 16px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .next-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(245,200,66,0.3); }
+  .next-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  /* RESULT CARD */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .result-emoji { font-size: 56px; margin-bottom: 16px; }
+
+  .result-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    color: var(--accent);
+  }
+
+  .result-msg {
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .reco-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+  .reco-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .reco-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+  .reco-price {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 6px;
+  }
+  .reco-desc { font-size: 14px; color: var(--muted); }
+
+  .buy-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .buy-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 16px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 15px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    transition: all 0.15s;
+  }
+  .buy-btn.primary {
+    background: var(--accent);
+    color: #0a0a0f;
+  }
+  .buy-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(245,200,66,0.35); }
+  .buy-btn.secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .buy-btn.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .contact-info {
+    margin-top: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 2;
+  }
+  .contact-info strong { color: var(--text); }
+
+  /* PRICING */
+  .pricing-section {
+    position: relative;
+    z-index: 1;
+    max-width: 760px;
+    margin: 60px auto;
+    padding: 0 24px;
+  }
+  .pricing-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 6vw, 56px);
+    letter-spacing: 2px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .pricing-sub { text-align: center; color: var(--muted); margin-bottom: 40px; font-size: 15px; }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 560px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+  .price-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .price-card:hover { transform: translateY(-4px); border-color: rgba(245,200,66,0.4); }
+  .price-card.featured {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(245,200,66,0.08), var(--card));
+    position: relative;
+  }
+  .feat-tag {
+    position: absolute;
+    top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent);
+    color: #0a0a0f;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 100px;
+  }
+  .pc-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 52px;
+    letter-spacing: 1px;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .pc-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .pc-desc { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* FOOTER */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 40px 24px 60px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 2;
+    margin-top: 40px;
+  }
+  footer strong { color: var(--text); }
+
+  /* HIDDEN */
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="bg-glow2"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="badge">📚 AP World History</div>
+  <h1>Stop Guessing.<br><span>Start Scoring.</span></h1>
+  <p class="hero-sub">Unit review packets built for AP World. Real content, real practice, real results. Find out exactly what you need — in 60 seconds.</p>
+  <a href="#quiz" class="cta-btn">Find My Study Pack →</a>
+</section>
+
+<div class="divider"></div>
+
+<!-- PRICING OVERVIEW -->
+<section class="pricing-section">
+  <h2>Simple Pricing</h2>
+  <p class="pricing-sub">No fluff. Just the material you need.</p>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="pc-price">$10</div>
+      <div class="pc-label">Single Unit Pack</div>
+      <div class="pc-desc">Any one unit of your choice. Detailed notes, key terms, and review questions.</div>
+    </div>
+    <div class="price-card featured">
+      <div class="feat-tag">Best Value</div>
+      <div class="pc-price">$30</div>
+      <div class="pc-label">Full Bundle — All 9 Units</div>
+      <div class="pc-desc">All 9 units + bonus study guides, MCQ practice tests & full-length practice exam. DM to purchase.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- QUIZ -->
+<section class="quiz-section" id="quiz">
+  <h2>Let's Find Your <em>Perfect Pack</em></h2>
+  <p class="quiz-desc">Answer a few quick questions so we can point you to exactly what you need.</p>
+
+  <div class="steps" id="step-dots"></div>
+
+  <div id="quiz-container"></div>
+</section>
+
+<footer>
+  <strong>Questions? Ready to buy?</strong><br>
+  📱 Text or call: <strong>(408) 893-6325</strong><br>
+  📷 Instagram: <strong>@matthewvaldez140</strong><br>
+  🎮 Discord: <strong>@matthewv2576</strong><br><br>
+  AP World History Review Packets by Matthew Valdez
+</footer>
+
+<script>
+const questions = [
+  {
+    type: 'options',
+    label: 'Question 1 of 5',
+    text: 'What\'s your main goal heading into the AP exam?',
+    options: ['Pass the exam (score a 3)', 'Score a 4 or 5', 'I just need to not fail 😅', 'Genuinely love history and want to go deep']
+  },
+  {
+    type: 'options',
+    label: 'Question 2 of 5',
+    text: 'How would you honestly describe where you are right now?',
+    options: ['I\'m cooked. I barely paid attention all year.', 'I know some things but there are big gaps', 'I feel decent but want to sharpen up', 'Pretty prepared — just need practice tests']
+  },
+  {
+    type: 'checkboxes',
+    label: 'Question 3 of 5',
+    text: 'Which units feel shakiest to you? (Pick all that apply)',
+    options: [
+      'Unit 1 — The Global Tapestry',
+      'Unit 2 — Networks of Exchange',
+      'Unit 3 — Land-Based Empires',
+      'Unit 4 — Transoceanic Interconnections',
+      'Unit 5 — Revolutions',
+      'Unit 6 — Consequences of Industrialization',
+      'Unit 7 — Global Conflict',
+      'Unit 8 — Cold War & Decolonization',
+      'Unit 9 — Globalization',
+      'Honestly... all of them'
+    ]
+  },
+  {
+    type: 'options',
+    label: 'Question 4 of 5',
+    text: 'What type of content do you struggle with most?',
+    options: ['Memorizing key terms & vocab', 'Writing SAQs and LEQs', 'Multiple choice / DBQ analysis', 'Connecting themes across time periods']
+  },
+  {
+    type: 'options',
+    label: 'Question 5 of 5',
+    text: 'How much time do you have before your AP exam?',
+    options: ['Less than 1 week 🔥', '1–2 weeks', '3–4 weeks', 'More than a month']
+  }
+];
+
+let current = 0;
+const answers = [];
+const container = document.getElementById('quiz-container');
+const dotsEl = document.getElementById('step-dots');
+
+function buildDots() {
+  dotsEl.innerHTML = '';
+  questions.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'step-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    dotsEl.appendChild(d);
+  });
+}
+
+function renderQuestion(idx) {
+  buildDots();
+  const q = questions[idx];
+  let inputHTML = '';
+
+  if (q.type === 'options') {
+    const letters = ['A','B','C','D','E','F'];
+    inputHTML = `<div class="options">` +
+      q.options.map((o, i) => `
+        <button class="option" onclick="selectOption(this, '${o.replace(/'/g,"\\'")}')">
+          <span class="option-letter">${letters[i]}</span>${o}
+        </button>`).join('') +
+      `</div>`;
+  } else if (q.type === 'checkboxes') {
+    inputHTML = `<div class="checkbox-group">` +
+      q.options.map((o, i) => `
+        <div class="checkbox-item" onclick="toggleCheck(this, '${o.replace(/'/g,"\\'")}')">
+          <div class="cb-box"><span class="cb-check">✓</span></div>
+          <span>${o}</span>
+        </div>`).join('') +
+      `</div>`;
+  }
+
+  container.innerHTML = `
+    <div class="quiz-card">
+      <div class="q-label">${q.label}</div>
+      <div class="q-text">${q.text}</div>
+      ${inputHTML}
+      <button class="next-btn" id="next-btn" onclick="nextQuestion()" disabled>
+        ${idx < questions.length - 1 ? 'Next Question →' : 'See My Recommendation →'}
+      </button>
+    </div>`;
+}
+
+let currentAnswer = null;
+
+function selectOption(el, val) {
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  currentAnswer = val;
+  document.getElementById('next-btn').disabled = false;
+}
+
+function toggleCheck(el, val) {
+  el.classList.toggle('selected');
+  const selected = document.querySelectorAll('.checkbox-item.selected');
+  currentAnswer = Array.from(selected).map(e => e.querySelector('span:last-child').textContent);
+  document.getElementById('next-btn').disabled = selected.length === 0;
+}
+
+function nextQuestion() {
+  answers.push(currentAnswer);
+  currentAnswer = null;
+  current++;
+  if (current >= questions.length) {
+    showResult();
+  } else {
+    renderQuestion(current);
+  }
+}
+
+function showResult() {
+  buildDots();
+
+  const prep = answers[1];
+  const weakUnits = answers[2];
+  const isCooked = prep && (prep.includes('cooked') || prep.includes('barely'));
+  const wantsAll = Array.isArray(weakUnits) && (weakUnits.includes('Honestly... all of them') || weakUnits.length >= 5);
+  const recommend = wantsAll || isCooked ? 'bundle' : 'single';
+
+  let emoji, title, msg;
+
+  if (recommend === 'bundle') {
+    emoji = '💪';
+    title = 'YOU NEED THE FULL BUNDLE';
+    msg = `Based on your answers, the full 9-unit bundle is your best move. You get everything — all units, bonus study guides, MCQ practice, and a full-length practice exam. At $30, it's the highest-value option to get you ready fast.`;
+  } else {
+    emoji = '🎯';
+    title = 'TARGETED UNIT PACKS';
+    msg = `You've got a solid foundation — you just need to shore up a few specific units. Pick the packs that match your weak spots at $10 each, and you'll be in great shape by exam day.`;
+  }
+
+  const recoTitle = recommend === 'bundle' ? 'Full Bundle — All 9 Units + Bonus Material' : 'Single Unit Pack(s)';
+  const recoPrice = recommend === 'bundle' ? '$30' : '$10 per unit';
+  const recoDesc = recommend === 'bundle'
+    ? 'All 9 units, study guides, MCQ practice sets, and a full-length practice exam. DM on Instagram to purchase.'
+    : 'Any unit of your choice. Text or DM to purchase.';
+
+  container.innerHTML = `
+    <div class="result-card">
+      <div class="result-emoji">${emoji}</div>
+      <div class="result-title">${title}</div>
+      <p class="result-msg">${msg}</p>
+      <div class="reco-box">
+        <div class="reco-label">📦 Recommended</div>
+        <div class="reco-title">${recoTitle}</div>
+        <div class="reco-price">${recoPrice}</div>
+        <div class="reco-desc">${recoDesc}</div>
+      </div>
+      <div class="buy-row">
+        <a href="https://instagram.com/matthewvaldez140" target="_blank" class="buy-btn primary">
+          📷 DM on Instagram to Buy
+        </a>
+        <a href="sms:4088936325" class="buy-btn secondary">
+          📱 Text (408) 893-6325
+        </a>
+      </div>
+      <p class="contact-info">
+        <strong>Instagram:</strong> @matthewvaldez140<br>
+        <strong>Discord:</strong> @matthewv2576<br>
+        <strong>Text/Call:</strong> (408) 893-6325
+      </p>
+    </div>`;
+
+  dotsEl.querySelectorAll('.step-dot').forEach(d => {
+    d.classList.remove('active');
+    d.classList.add('done');
+  });
+}
+
+// INIT
+renderQuestion(0);
+</script>
+</body>
+</html>
